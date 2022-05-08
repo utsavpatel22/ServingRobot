@@ -25,7 +25,7 @@ class PedPoseServer():
 
     def ped_pose_publisher(self):
         goal_location = self.goal_selector()
-        self.ped_data_object.pose.position.x = goal_location[0]
+        self.ped_data_object.pose.position.x = goal_location[0] - 1 #subtracting 1 meter to keep the robot at a safe distance
         self.ped_data_object.pose.position.y = goal_location[1]
         self.ped_data_object.header.frame_id = "base_link"
         p_in_odom = self.listener.transformPose("odom", self.ped_data_object)
