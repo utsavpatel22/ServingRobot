@@ -52,8 +52,8 @@ class PedPoseServer():
         rob_q = self.amcl_pose_data.pose.pose.orientation 
         (_, _, robot_yaw) = tf.transformations.euler_from_quaternion([rob_q.x, rob_q.y, rob_q.z, rob_q.w])
         
-        self.ped_data_object.pose.position.x = goal_location[0] - (1 * math.cos(ped_yaw)) #subtracting 1 meter to keep the robot at a safe distance
-        self.ped_data_object.pose.position.y = goal_location[1] - (1 * math.sin(ped_yaw))
+        self.ped_data_object.pose.position.x = goal_location[0] - (1.5 * math.cos(ped_yaw)) #subtracting 1 meter to keep the robot at a safe distance
+        self.ped_data_object.pose.position.y = goal_location[1] - (1.5 * math.sin(ped_yaw))
         self.ped_data_object.header.frame_id = "base_link"
         
         goal_in_map = self.listener.transformPose("map", self.ped_data_object)
@@ -71,7 +71,12 @@ class PedPoseServer():
     def goal_selector(self):
         # This function will have the logic for locking the pedestrian and setting goal location
         keys = list(self.ped_data_dict.keys())
-        return self.ped_data_dict[keys[0]]
+        for i in keys:
+            distance = math.sqrt(self.ped_data_dict[i][0]**2 + self.ped_data_dict[i][1]**2)
+            if distance > 1.5:
+                seleccted_key = i
+                break
+        return self.ped_data_dict[seleccted_key]
 
 
     def handle_get_ped_pose(self, req):
